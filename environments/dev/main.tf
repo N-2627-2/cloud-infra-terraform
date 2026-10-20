@@ -8,3 +8,10 @@ module "vpc" {
   availability_zones       = ["us-east-1a", "us-east-1b"]
   environment              = "dev"
 }
+
+module "security" {
+  source = "../../modules/security"
+
+  vpc_id      = module.vpc.vpc_id
+  environment = "dev"
+}
