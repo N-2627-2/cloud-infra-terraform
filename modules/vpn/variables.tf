@@ -19,6 +19,12 @@ variable "allowed_lab_cidr" {
   default     = "10.20.0.0/16"
 }
 
+variable "peer_public_ip_cidr" {
+  description = "Public IP / CIDR of the GNS3 / VyOS WAN Interface"
+  type        = string
+  default     = "0.0.0.0/0"
+}
+
 variable "environment" {
   description = "Deployment environment name"
   type        = string
