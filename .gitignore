@@ -19,6 +19,5 @@ crash.log
 *.pub
 *.key
 
-# Local project progress notes (keep untracked for now)
-/README.md
+# Local project progress notes
 INTEGRATION_CONTRACT.md
