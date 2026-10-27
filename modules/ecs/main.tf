@@ -54,3 +54,16 @@ resource "aws_cloudwatch_log_group" "portal" {
     Name = "securechain-cw-portal-${var.environment}"
   }
 }
+
+resource "aws_ecr_repository" "n8n" {
+  name                 = "securechain-n8n-${var.environment}"
+  image_tag_mutability = "MUTABLE"
+
+  image_scanning_configuration {
+    scan_on_push = true
+  }
+
+  tags = {
+    Name = "securechain-ecr-n8n-${var.environment}"
+  }
+}

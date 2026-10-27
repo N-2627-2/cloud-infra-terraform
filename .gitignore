@@ -18,3 +18,6 @@ crash.log
 *.pem
 *.pub
 *.key
+
+# Local project progress notes (keep untracked for now)
+/README.md
