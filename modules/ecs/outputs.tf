@@ -17,3 +17,8 @@ output "portal_ecr_repository_url" {
   description = "URL of the Portal ECR Repository"
   value       = aws_ecr_repository.portal.repository_url
 }
+
+output "n8n_ecr_repository_url" {
+  description = "URL of the n8n ECR Repository"
+  value       = aws_ecr_repository.n8n.repository_url
+}
