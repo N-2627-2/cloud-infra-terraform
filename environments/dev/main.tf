@@ -26,3 +26,14 @@ module "ecs" {
   ecs_execution_role_arn = module.security.ecs_execution_role_arn
   ecs_task_role_arn      = module.security.ecs_task_role_arn
 }
+
+module "vpn" {
+  source = "../../modules/vpn"
+
+  environment            = "dev"
+  vpc_id                 = module.vpc.vpc_id
+  public_subnet_id       = module.vpc.public_subnet_ids[0]
+  private_route_table_id = module.vpc.private_route_table_id
+  allowed_lab_cidr       = "10.20.0.0/16"
+  peer_public_ip_cidr    = "0.0.0.0/0"
+}
