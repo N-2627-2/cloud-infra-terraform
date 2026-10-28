@@ -52,7 +52,7 @@ variable "wireguard_peer_public_key" {
 variable "wireguard_peer_tunnel_cidr" {
   description = "Tunnel address assigned to the remote WireGuard peer, in /32 CIDR notation"
   type        = string
-  default     = "10.200.0.2/32"
+  default     = "10.99.0.2/32"
 
   validation {
     condition     = can(cidrhost(var.wireguard_peer_tunnel_cidr, 0)) && endswith(var.wireguard_peer_tunnel_cidr, "/32")
