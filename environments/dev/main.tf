@@ -30,10 +30,14 @@ module "ecs" {
 module "vpn" {
   source = "../../modules/vpn"
 
-  environment            = "dev"
-  vpc_id                 = module.vpc.vpc_id
-  public_subnet_id       = module.vpc.public_subnet_ids[0]
-  private_route_table_id = module.vpc.private_route_table_id
-  allowed_lab_cidr       = "10.20.0.0/16"
-  peer_public_ip_cidr    = "0.0.0.0/0"
+  environment                      = "dev"
+  aws_region                       = var.aws_region
+  vpc_id                           = module.vpc.vpc_id
+  public_subnet_id                 = module.vpc.public_subnet_ids[0]
+  private_route_table_id           = module.vpc.private_route_table_id
+  allowed_lab_cidr                 = var.vpn_allowed_lab_cidr
+  peer_public_ip_cidr              = var.vpn_peer_public_ip_cidr
+  wireguard_peer_public_key        = var.vpn_peer_public_key
+  wireguard_peer_tunnel_cidr       = var.vpn_peer_tunnel_cidr
+  wireguard_private_key_secret_arn = var.vpn_private_key_secret_arn
 }

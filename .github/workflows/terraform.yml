@@ -1,0 +1,41 @@
+name: Terraform checks
+
+on:
+  push:
+    branches:
+      - "**"
+  pull_request:
+
+permissions:
+  contents: read
+
+jobs:
+  format:
+    name: Terraform format
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - name: Check formatting
+        run: terraform fmt -check -recursive -diff
+
+  validate:
+    name: Validate ${{ matrix.root }}
+    runs-on: ubuntu-latest
+    strategy:
+      fail-fast: false
+      matrix:
+        root:
+          - environments/bootstrap
+          - environments/dev
+    steps:
+      - uses: actions/checkout@v4
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.9.8
+      - name: Initialize without a backend
+        run: terraform -chdir="${{ matrix.root }}" init -backend=false -input=false
+      - name: Validate configuration
+        run: terraform -chdir="${{ matrix.root }}" validate
