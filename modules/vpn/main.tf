@@ -109,7 +109,7 @@ resource "aws_instance" "vpn" {
     umask 077
     cat >/etc/wireguard/wg0.conf <<WG_CONF
     [Interface]
-    Address = 10.200.0.1/24
+    Address = 10.99.0.1/24
     ListenPort = 51820
     PrivateKey = $PRIVATE_KEY
     PostUp = iptables -A FORWARD -i %i -j ACCEPT; iptables -A FORWARD -o %i -j ACCEPT
