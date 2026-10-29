@@ -40,3 +40,8 @@ variable "vpn_allowed_lab_cidr" {
   type        = string
   default     = "10.20.0.0/16"
 }
+
+variable "db_username" {
+  description = "Database username for dev environment"
+  type        = string
+}
