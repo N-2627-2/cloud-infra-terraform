@@ -50,5 +50,5 @@ module "rds" {
   db_subnet_group_name = module.vpc.db_subnet_group_name
   db_security_group_id = module.security.db_security_group_id
   db_name              = "securechain"
-  db_username          = "dbadmin"
+  db_username          = var.db_username
 }
