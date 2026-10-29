@@ -41,3 +41,14 @@ module "vpn" {
   wireguard_peer_tunnel_cidr       = var.vpn_peer_tunnel_cidr
   wireguard_private_key_secret_arn = var.vpn_private_key_secret_arn
 }
+
+module "rds" {
+  source = "../../modules/rds"
+
+  environment          = "dev"
+  vpc_id               = module.vpc.vpc_id
+  db_subnet_group_name = module.vpc.db_subnet_group_name
+  db_security_group_id = module.security.db_security_group_id
+  db_name              = "securechain"
+  db_username          = "dbadmin"
+}
