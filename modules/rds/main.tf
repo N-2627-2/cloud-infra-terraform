@@ -39,9 +39,9 @@ resource "aws_db_instance" "postgres" {
   db_subnet_group_name   = var.db_subnet_group_name
   vpc_security_group_ids = [var.db_security_group_id]
 
-  publicly_accessible    = false
-  skip_final_snapshot    = true
-  deletion_protection    = false
+  publicly_accessible = false
+  skip_final_snapshot = true
+  deletion_protection = false
 
   tags = {
     Name = "securechain-db-${var.environment}"
