@@ -45,3 +45,8 @@ variable "db_username" {
   description = "Database username for dev environment"
   type        = string
 }
+
+variable "alert_email" {
+  description = "Email address for SNS alert notifications in dev"
+  type        = string
+}
