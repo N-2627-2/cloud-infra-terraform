@@ -64,3 +64,13 @@ module "alb" {
   public_subnet_ids     = module.vpc.public_subnet_ids
   alb_security_group_id = module.security.alb_security_group_id
 }
+
+module "monitoring" {
+  source = "../../modules/monitoring"
+
+  environment                     = "dev"
+  alb_arn_suffix                  = module.alb.alb_arn_suffix
+  portal_target_group_arn_suffix  = module.alb.portal_target_group_arn_suffix
+  backend_target_group_arn_suffix = module.alb.backend_target_group_arn_suffix
+  alert_email                     = var.alert_email
+}

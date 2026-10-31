@@ -22,3 +22,18 @@ output "backend_target_group_arn" {
   description = "ARN of the Backend Target Group"
   value       = aws_lb_target_group.backend.arn
 }
+
+output "alb_arn_suffix" {
+  description = "ARN suffix of the Application Load Balancer for CloudWatch metrics"
+  value       = aws_lb.main.arn_suffix
+}
+
+output "portal_target_group_arn_suffix" {
+  description = "ARN suffix of the Portal Target Group for CloudWatch metrics"
+  value       = aws_lb_target_group.portal.arn_suffix
+}
+
+output "backend_target_group_arn_suffix" {
+  description = "ARN suffix of the Backend Target Group for CloudWatch metrics"
+  value       = aws_lb_target_group.backend.arn_suffix
+}
