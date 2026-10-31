@@ -28,3 +28,19 @@ variable "ecs_task_role_arn" {
   description = "IAM Role ARN for ECS tasks"
   type        = string
 }
+
+variable "portal_target_group_arn" {
+  description = "ARN of the Portal Target Group from ALB module"
+  type        = string
+}
+
+variable "backend_target_group_arn" {
+  description = "ARN of the Backend Target Group from ALB module"
+  type        = string
+}
+
+variable "db_secret_arn" {
+  description = "ARN of the Secrets Manager secret containing DB credentials"
+  type        = string
+  default     = ""
+}
