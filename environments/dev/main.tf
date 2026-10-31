@@ -19,12 +19,15 @@ module "security" {
 module "ecs" {
   source = "../../modules/ecs"
 
-  environment            = "dev"
-  vpc_id                 = module.vpc.vpc_id
-  private_app_subnet_ids = module.vpc.private_app_subnet_ids
-  app_security_group_id  = module.security.app_security_group_id
-  ecs_execution_role_arn = module.security.ecs_execution_role_arn
-  ecs_task_role_arn      = module.security.ecs_task_role_arn
+  environment              = "dev"
+  vpc_id                   = module.vpc.vpc_id
+  private_app_subnet_ids   = module.vpc.private_app_subnet_ids
+  app_security_group_id    = module.security.app_security_group_id
+  ecs_execution_role_arn   = module.security.ecs_execution_role_arn
+  ecs_task_role_arn        = module.security.ecs_task_role_arn
+  portal_target_group_arn  = module.alb.portal_target_group_arn
+  backend_target_group_arn = module.alb.backend_target_group_arn
+  db_secret_arn            = module.rds.db_secret_arn
 }
 
 module "vpn" {

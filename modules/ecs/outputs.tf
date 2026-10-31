@@ -22,3 +22,13 @@ output "n8n_ecr_repository_url" {
   description = "URL of the n8n ECR Repository"
   value       = aws_ecr_repository.n8n.repository_url
 }
+
+output "portal_service_name" {
+  description = "Name of the Portal ECS Service"
+  value       = aws_ecs_service.portal.name
+}
+
+output "backend_service_name" {
+  description = "Name of the Backend ECS Service"
+  value       = aws_ecs_service.backend.name
+}
