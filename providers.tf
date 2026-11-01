@@ -1,5 +1,5 @@
 terraform {
-  required_version = ">= 1.5.0"
+  required_version = ">= 1.10.0"
 
   required_providers {
     aws = {
@@ -9,13 +9,12 @@ terraform {
   }
 
   # Remote backend configuration template
-  # Uncomment once remote S3 state bucket and DynamoDB lock table are created
+  # Uncomment and configure backend.hcl once S3 state bucket is migrated
   # backend "s3" {
-  #   bucket         = "securechain-tfstate-bucket"
-  #   key            = "dev/terraform.tfstate"
-  #   region         = "us-east-1"
-  #   dynamodb_table = "securechain-tfstate-locks"
-  #   encrypt        = true
+  #   bucket       = "securechain-tfstate-dev-2627"
+  #   key          = "dev/terraform.tfstate"
+  #   region       = "us-east-1"
+  #   use_lockfile = true
   # }
 }
 
