@@ -1,0 +1,101 @@
+name: Terraform dev deployment
+
+on:
+  workflow_dispatch:
+    inputs:
+      operation:
+        description: Terraform operation to run
+        type: choice
+        required: true
+        default: plan
+        options:
+          - plan
+          - apply
+          - destroy
+      confirm_destroy:
+        description: Enter DESTROY to authorize a destroy plan
+        type: string
+        required: false
+
+permissions:
+  contents: read
+
+concurrency:
+  group: terraform-dev-state
+  cancel-in-progress: false
+
+jobs:
+  deploy:
+    name: Terraform ${{ inputs.operation }} (dev)
+    if: github.ref == 'refs/heads/main'
+    runs-on: ubuntu-latest
+    environment: dev
+    permissions:
+      contents: read
+      id-token: write
+    env:
+      TF_IN_AUTOMATION: "true"
+      TF_INPUT: "false"
+      TF_VAR_vpn_peer_public_ip_cidr: ${{ vars.VPN_PEER_PUBLIC_IP_CIDR }}
+      TF_VAR_vpn_peer_public_key: ${{ vars.VPN_PEER_PUBLIC_KEY }}
+      TF_VAR_vpn_peer_tunnel_cidr: ${{ vars.VPN_PEER_TUNNEL_CIDR }}
+      TF_VAR_vpn_allowed_lab_cidr: ${{ vars.VPN_ALLOWED_LAB_CIDR }}
+      TF_VAR_vpn_private_key_secret_arn: ${{ vars.VPN_PRIVATE_KEY_SECRET_ARN }}
+      TF_VAR_db_username: ${{ vars.DB_USERNAME }}
+      TF_VAR_alert_email: ${{ vars.ALERT_EMAIL }}
+    steps:
+      - uses: actions/checkout@v4
+
+      - name: Check deployment inputs
+        env:
+          AWS_TERRAFORM_ROLE_ARN: ${{ vars.AWS_TERRAFORM_ROLE_ARN }}
+          OPERATION: ${{ inputs.operation }}
+          CONFIRM_DESTROY: ${{ inputs.confirm_destroy }}
+        run: |
+          set -euo pipefail
+          for name in AWS_TERRAFORM_ROLE_ARN TF_VAR_vpn_peer_public_ip_cidr TF_VAR_vpn_peer_public_key TF_VAR_vpn_peer_tunnel_cidr TF_VAR_vpn_allowed_lab_cidr TF_VAR_vpn_private_key_secret_arn TF_VAR_db_username TF_VAR_alert_email; do
+            if [ -z "${!name}" ]; then
+              echo "::error::Required GitHub environment variable is not configured: ${name}"
+              exit 1
+            fi
+            if [[ "${!name}" == DEMO_* ]]; then
+              echo "::error::Replace demo value in GitHub environment variable ${name} before deployment."
+              exit 1
+            fi
+          done
+          if [ "$OPERATION" = "destroy" ] && [ "$CONFIRM_DESTROY" != "DESTROY" ]; then
+            echo "::error::Set confirm_destroy to DESTROY to continue."
+            exit 1
+          fi
+
+      - uses: hashicorp/setup-terraform@v3
+        with:
+          terraform_version: 1.10.0
+
+      - name: Configure AWS credentials with OIDC
+        uses: aws-actions/configure-aws-credentials@v4
+        with:
+          role-to-assume: ${{ vars.AWS_TERRAFORM_ROLE_ARN }}
+          role-session-name: terraform-dev-${{ github.run_id }}
+          aws-region: ${{ vars.AWS_REGION || 'us-east-1' }}
+
+      - name: Initialize remote backend
+        working-directory: environments/dev
+        run: terraform init -backend-config=backend.hcl -input=false -lockfile=readonly
+
+      - name: Create Terraform plan
+        working-directory: environments/dev
+        env:
+          OPERATION: ${{ inputs.operation }}
+        run: |
+          set -euo pipefail
+          if [ "$OPERATION" = "destroy" ]; then
+            terraform plan -destroy -input=false -lock-timeout=5m -out=tfplan
+          else
+            terraform plan -input=false -lock-timeout=5m -out=tfplan
+          fi
+
+      - name: Apply approved plan
+        if: inputs.operation == 'apply' || inputs.operation == 'destroy'
+        working-directory: environments/dev
+        run: terraform apply -input=false -lock-timeout=5m tfplan
