@@ -17,7 +17,7 @@ jobs:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.9.8
+          terraform_version: 1.10.0
       - name: Check formatting
         run: terraform fmt -check -recursive -diff
 
@@ -34,8 +34,13 @@ jobs:
       - uses: actions/checkout@v4
       - uses: hashicorp/setup-terraform@v3
         with:
-          terraform_version: 1.9.8
-      - name: Initialize without a backend
-        run: terraform -chdir="${{ matrix.root }}" init -backend=false -input=false
+          terraform_version: 1.10.0
+      - name: Initialize backend if config exists
+        run: |
+          if [ -f "${{ matrix.root }}/backend.hcl" ]; then
+            terraform -chdir="${{ matrix.root }}" init -backend-config=backend.hcl -input=false
+          else
+            terraform -chdir="${{ matrix.root }}" init -backend=false -input=false
+          fi
       - name: Validate configuration
         run: terraform -chdir="${{ matrix.root }}" validate
