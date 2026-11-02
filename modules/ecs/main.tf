@@ -84,8 +84,8 @@ resource "aws_ecs_task_definition" "portal" {
       essential = true
       portMappings = [
         {
-          containerPort = 80
-          hostPort      = 80
+          containerPort = 3000
+          hostPort      = 3000
           protocol      = "tcp"
         }
       ]
@@ -121,11 +121,22 @@ resource "aws_ecs_task_definition" "backend" {
       essential = true
       portMappings = [
         {
-          containerPort = 8080
-          hostPort      = 8080
+          containerPort = 8000
+          hostPort      = 8000
           protocol      = "tcp"
         }
       ]
+      environment = [
+        { name = "POSTGRES_SERVER", value = var.db_host },
+        { name = "POSTGRES_USER", value = var.db_user },
+        { name = "POSTGRES_DB", value = var.db_name }
+      ]
+      secrets = var.db_secret_arn != "" ? [
+        {
+          name      = "POSTGRES_PASSWORD"
+          valueFrom = "${var.db_secret_arn}:password::"
+        }
+      ] : []
       logConfiguration = {
         logDriver = "awslogs"
         options = {
@@ -158,7 +169,7 @@ resource "aws_ecs_service" "portal" {
   load_balancer {
     target_group_arn = var.portal_target_group_arn
     container_name   = "portal"
-    container_port   = 80
+    container_port   = 3000
   }
 
   depends_on = [aws_ecs_task_definition.portal]
@@ -180,7 +191,7 @@ resource "aws_ecs_service" "backend" {
   load_balancer {
     target_group_arn = var.backend_target_group_arn
     container_name   = "backend"
-    container_port   = 8080
+    container_port   = 8000
   }
 
   depends_on = [aws_ecs_task_definition.backend]

@@ -13,8 +13,8 @@ resource "aws_lb" "main" {
 }
 
 resource "aws_lb_target_group" "portal" {
-  name        = "securechain-tg-portal-${var.environment}"
-  port        = 80
+  name_prefix = "tg-p-"
+  port        = 3000
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
@@ -22,13 +22,17 @@ resource "aws_lb_target_group" "portal" {
   health_check {
     enabled             = true
     path                = "/"
-    port                = "traffic-port"
+    port                = "3000"
     protocol            = "HTTP"
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-    timeout             = 5
+    matcher             = "200,302,308"
     interval            = 30
-    matcher             = "200-399"
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   tags = {
@@ -37,22 +41,26 @@ resource "aws_lb_target_group" "portal" {
 }
 
 resource "aws_lb_target_group" "backend" {
-  name        = "securechain-tg-backend-${var.environment}"
-  port        = 8080
+  name_prefix = "tg-b-"
+  port        = 8000
   protocol    = "HTTP"
   vpc_id      = var.vpc_id
   target_type = "ip"
 
   health_check {
     enabled             = true
-    path                = "/health"
-    port                = "traffic-port"
+    path                = "/api/v1/health"
+    port                = "8000"
     protocol            = "HTTP"
-    healthy_threshold   = 3
-    unhealthy_threshold = 3
-    timeout             = 5
+    matcher             = "200"
     interval            = 30
-    matcher             = "200-399"
+    timeout             = 5
+    healthy_threshold   = 2
+    unhealthy_threshold = 3
+  }
+
+  lifecycle {
+    create_before_destroy = true
   }
 
   tags = {
