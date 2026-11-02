@@ -44,3 +44,21 @@ variable "db_secret_arn" {
   type        = string
   default     = ""
 }
+
+variable "db_host" {
+  description = "RDS DB instance hostname"
+  type        = string
+  default     = ""
+}
+
+variable "db_user" {
+  description = "RDS DB master username"
+  type        = string
+  default     = ""
+}
+
+variable "db_name" {
+  description = "RDS DB database name"
+  type        = string
+  default     = "securechain"
+}

@@ -12,3 +12,13 @@ output "db_secret_arn" {
   description = "ARN of AWS Secrets Manager secret containing DB credentials"
   value       = aws_secretsmanager_secret.db_credentials.arn
 }
+
+output "db_name" {
+  description = "Initial database name"
+  value       = aws_db_instance.postgres.db_name
+}
+
+output "db_username" {
+  description = "Master database username"
+  value       = aws_db_instance.postgres.username
+}

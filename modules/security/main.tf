@@ -38,17 +38,17 @@ resource "aws_security_group" "app_sg" {
   vpc_id      = var.vpc_id
 
   ingress {
-    description     = "Allow inbound HTTP traffic from ALB SG"
-    from_port       = 80
-    to_port         = 80
+    description     = "Allow inbound Next.js portal traffic from ALB SG"
+    from_port       = 3000
+    to_port         = 3000
     protocol        = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
   }
 
   ingress {
-    description     = "Allow inbound app service traffic from ALB SG"
-    from_port       = 8080
-    to_port         = 8080
+    description     = "Allow inbound FastAPI backend traffic from ALB SG"
+    from_port       = 8000
+    to_port         = 8000
     protocol        = "tcp"
     security_groups = [aws_security_group.alb_sg.id]
   }
@@ -137,4 +137,20 @@ resource "aws_iam_role" "ecs_task_role" {
   tags = {
     Name = "securechain-ecs-task-role-${var.environment}"
   }
+}
+
+resource "aws_iam_role_policy" "ecs_execution_read_db_secret" {
+  name = "securechain-ecs-execution-read-db-secret-${var.environment}"
+  role = aws_iam_role.ecs_execution_role.id
+
+  policy = jsonencode({
+    Version = "2012-10-17"
+    Statement = [
+      {
+        Effect   = "Allow"
+        Action   = ["secretsmanager:GetSecretValue"]
+        Resource = "*"
+      }
+    ]
+  })
 }

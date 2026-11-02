@@ -12,8 +12,9 @@ module "vpc" {
 module "security" {
   source = "../../modules/security"
 
-  vpc_id      = module.vpc.vpc_id
-  environment = "dev"
+  vpc_id        = module.vpc.vpc_id
+  environment   = "dev"
+  db_secret_arn = module.rds.db_secret_arn
 }
 
 module "ecs" {
@@ -28,6 +29,9 @@ module "ecs" {
   portal_target_group_arn  = module.alb.portal_target_group_arn
   backend_target_group_arn = module.alb.backend_target_group_arn
   db_secret_arn            = module.rds.db_secret_arn
+  db_host                  = module.rds.db_instance_address
+  db_user                  = module.rds.db_username
+  db_name                  = module.rds.db_name
 }
 
 module "vpn" {
