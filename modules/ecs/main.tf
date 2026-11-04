@@ -14,6 +14,7 @@ resource "aws_ecs_cluster" "main" {
 resource "aws_ecr_repository" "backend" {
   name                 = "securechain-backend-${var.environment}"
   image_tag_mutability = "MUTABLE"
+  force_delete         = true
 
   image_scanning_configuration {
     scan_on_push = true
@@ -27,6 +28,7 @@ resource "aws_ecr_repository" "backend" {
 resource "aws_ecr_repository" "portal" {
   name                 = "securechain-portal-${var.environment}"
   image_tag_mutability = "MUTABLE"
+  force_delete         = true
 
   image_scanning_configuration {
     scan_on_push = true
@@ -40,6 +42,7 @@ resource "aws_ecr_repository" "portal" {
 resource "aws_ecr_repository" "n8n" {
   name                 = "securechain-n8n-${var.environment}"
   image_tag_mutability = "MUTABLE"
+  force_delete         = true
 
   image_scanning_configuration {
     scan_on_push = true
