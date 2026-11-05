@@ -138,8 +138,8 @@ resource "aws_security_group" "quarantine" {
   }
 
   tags = {
-    Name        = "securechain-quarantine-sg-${var.environment}"
-    ManagedBy   = "SOAR-Automation"
+    Name      = "securechain-quarantine-sg-${var.environment}"
+    ManagedBy = "SOAR-Automation"
   }
 }
 
