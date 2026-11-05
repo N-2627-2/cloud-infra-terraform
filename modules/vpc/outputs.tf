@@ -32,3 +32,13 @@ output "private_route_table_id" {
   description = "The ID of the private route table (used for quarantine Network ACL assignments)"
   value       = aws_route_table.private.id
 }
+
+output "quarantine_security_group_id" {
+  description = "The ID of the security group used for real-time node quarantine"
+  value       = aws_security_group.quarantine.id
+}
+
+output "quarantine_nacl_id" {
+  description = "The ID of the network ACL used for dynamic subnet isolation"
+  value       = aws_network_acl.quarantine.id
+}

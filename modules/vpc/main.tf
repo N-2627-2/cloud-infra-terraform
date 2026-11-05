@@ -123,3 +123,49 @@ resource "aws_db_subnet_group" "main" {
     Name = "securechain-db-subnet-group-${var.environment}"
   }
 }
+
+resource "aws_security_group" "quarantine" {
+  name        = "securechain-quarantine-sg-${var.environment}"
+  description = "Applied dynamically to isolated nodes; blocks all ingress and egress"
+  vpc_id      = aws_vpc.main.id
+
+  egress {
+    description = "Allow outbound traffic only to SIEM/SOC collector"
+    from_port   = 514
+    to_port     = 514
+    protocol    = "udp"
+    cidr_blocks = ["10.20.0.0/16"]
+  }
+
+  tags = {
+    Name      = "securechain-quarantine-sg-${var.environment}"
+    ManagedBy = "SOAR-Automation"
+  }
+}
+
+resource "aws_network_acl" "quarantine" {
+  vpc_id     = aws_vpc.main.id
+  subnet_ids = aws_subnet.private_app[*].id
+
+  ingress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  egress {
+    protocol   = "-1"
+    rule_no    = 100
+    action     = "allow"
+    cidr_block = "0.0.0.0/0"
+    from_port  = 0
+    to_port    = 0
+  }
+
+  tags = {
+    Name = "securechain-quarantine-nacl-${var.environment}"
+  }
+}
